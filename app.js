@@ -40,12 +40,27 @@ var ENTREPRISES = [
 
 var items=[], filt=null, docOk=false, selEnt=null;
 
+var TAB_TITLES={
+  params:'<i class="fas fa-sliders-h"></i> Param\u00e8tres du projet',
+  import:'<i class="fas fa-file-import"></i> Import RS Components',
+  materiel:'<i class="fas fa-boxes-stacked"></i> Liste de mat\u00e9riel',
+  document:'<i class="fas fa-file-invoice-dollar"></i> Document'
+};
+
 function switchTab(n){
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.sb-item').forEach(function(t){t.classList.remove('active')});
   document.querySelectorAll('.pnl').forEach(function(p){p.classList.remove('active')});
-  document.querySelector('[data-tab="'+n+'"]').classList.add('active');
+  var item=document.querySelector('[data-tab="'+n+'"]');
+  if(item) item.classList.add('active');
   document.getElementById('panel-'+n).classList.add('active');
+  document.getElementById('topTitle').innerHTML=TAB_TITLES[n]||'';
   if(n==='materiel') renderT();
+  // Close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
 }
 
 // === CSV PARSING (RS Components format) ===
@@ -261,9 +276,12 @@ function genDoc(){
 
   document.getElementById('docC').innerHTML=h;
   docOk=true;
-  // Hide options, show action buttons
   document.getElementById('docOptions').style.display='none';
   document.getElementById('docActions').style.display='flex';
+  // Ensure we're on document tab
+  if(!document.getElementById('panel-document').classList.contains('active')){
+    switchTab('document');
+  }
 }
 
 // === EXPORTS ===

@@ -3,54 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MELEC - Devis et Facturation</title>
+<title>MELEC PRO - Devis et Facturation</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="hdr">
-<div class="hdr-l">
-<svg width="44" height="44" viewBox="0 0 44 44"><rect width="44" height="44" rx="10" fill="#fff"/><path d="M24 6L12 24h8l-4 14 16-20h-8z" fill="#1a56db"/></svg>
-<div><h1>MELEC - Devis &amp; Facturation</h1><div class="hdr-sub">Gestion de mat&#233;riel &#233;lectrique &#8226; Import RS Components</div></div>
-</div>
-<div><button class="btn btn-acc" onclick="resetAll()"><i class="fas fa-redo"></i> Nouveau</button></div>
-</div>
+<div class="app">
 
-<div class="tabs">
-<div class="tab active" data-tab="params" onclick="switchTab('params')"><i class="fas fa-cog"></i> Param&#232;tres</div>
-<div class="tab" data-tab="import" onclick="switchTab('import')"><i class="fas fa-file-import"></i> Import CSV</div>
-<div class="tab" data-tab="materiel" onclick="switchTab('materiel')"><i class="fas fa-list"></i> Mat&#233;riel <span class="badge" id="bc">0</span></div>
-<div class="tab" data-tab="document" onclick="switchTab('document')"><i class="fas fa-file-invoice"></i> Document</div>
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+<div class="sb-hdr">
+<div class="sb-logo">
+<svg width="38" height="38" viewBox="0 0 38 38"><rect width="38" height="38" rx="10" fill="#2563eb"/><path d="M21 5L10 20h7l-3 13 14-17h-7z" fill="#fff"/></svg>
+<div><h1>MELEC PRO</h1><small>Devis &amp; Facturation</small></div>
 </div>
+</div>
+<div class="sb-nav">
+<div class="sb-item active" data-tab="params" onclick="switchTab('params')"><i class="fas fa-sliders-h"></i> Param&#232;tres</div>
+<div class="sb-item" data-tab="import" onclick="switchTab('import')"><i class="fas fa-file-import"></i> Import RS</div>
+<div class="sb-item" data-tab="materiel" onclick="switchTab('materiel')"><i class="fas fa-boxes-stacked"></i> Mat&#233;riel <span class="badge" id="bc">0</span></div>
+<div class="sb-sep"></div>
+<div class="sb-item" data-tab="document" onclick="switchTab('document')"><i class="fas fa-file-invoice-dollar"></i> Document</div>
+</div>
+<div class="sb-foot">&#169; 2026 MELEC PRO &mdash; <span>Lyc&#233;e S. de Champlain</span></div>
+</nav>
 
-<div class="main">
+<!-- MAIN CONTENT -->
+<div class="content">
+<div class="topbar">
+<div class="topbar-title" id="topTitle"><i class="fas fa-sliders-h"></i> Param&#232;tres du projet</div>
+<div class="topbar-actions">
+<button class="btn btn-ghost btn-sm" onclick="resetAll()"><i class="fas fa-rotate-right"></i> R&#233;initialiser</button>
+</div>
+</div>
+<div class="page">
+
+<!-- ========== PARAMETRES ========== -->
+<div class="pnl active" id="panel-params">
+<div class="card">
+<div class="card-header"><div class="ct"><i class="fas fa-building"></i> Entreprise &#233;mettrice</div><div class="ct-badge" style="font-size:.7rem;background:#eff6ff;color:#2563eb;padding:.2rem .6rem;border-radius:20px;font-weight:600">Choisir</div></div>
+<p style="font-size:.88rem;color:#64748b;margin-bottom:1rem">Cliquez sur une entreprise fictive ou remplissez les champs manuellement :</p>
+<div class="ent-grid" id="entGrid"></div>
+</div>
+<div class="card">
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-pen-to-square"></i> D&#233;tails entreprise</div>
+<div class="fr">
+<div class="fg"><label>Nom de l'entreprise</label><input type="text" class="fc" id="pCo" placeholder="Ex: Mon Entreprise SARL"></div>
+<div class="fg"><label>SIRET</label><input type="text" class="fc" id="pSi" placeholder="123 456 789 00012"></div>
+</div>
+<div class="fg"><label>Adresse</label><input type="text" class="fc" id="pAd" placeholder="12 rue de l'Industrie, 75012 Paris"></div>
+<div class="fr">
+<div class="fg"><label>T&#233;l&#233;phone</label><input type="text" class="fc" id="pPh" placeholder="01 23 45 67 89"></div>
+<div class="fg"><label>Email</label><input type="email" class="fc" id="pEm" placeholder="contact@entreprise.fr"></div>
+</div>
+</div>
+<div class="card">
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-user-tie"></i> Client</div>
+<div class="fr">
+<div class="fg"><label>Nom du client</label><input type="text" class="fc" id="cNm" placeholder="Nom ou raison sociale"></div>
+<div class="fg"><label>Soci&#233;t&#233; (optionnel)</label><input type="text" class="fc" id="cCo" placeholder="Soci&#233;t&#233;"></div>
+</div>
+<div class="fg"><label>Adresse</label><input type="text" class="fc" id="cAd" placeholder="Num&#233;ro et rue"></div>
+<div class="fr">
+<div class="fg"><label>Code Postal</label><input type="text" class="fc" id="cCp" placeholder="Ex: 94000" maxlength="5" oninput="lookupCP(this.value)"><div id="cpStatus" style="font-size:.78rem;margin-top:.3rem"></div></div>
+<div class="fg"><label>Ville</label><input type="text" class="fc" id="cVi" placeholder="Ville (automatique)" readonly style="background:var(--g50)"></div>
+</div>
+</div>
+<div class="card">
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-helmet-safety"></i> Main d'&#339;uvre</div>
+<div class="fr">
+<div class="fg"><label>Taux horaire (&#8364;/h HT)</label><input type="number" class="fc" id="pHr" value="45" step="0.5" min="0"></div>
+<div class="fg"><label>Nombre d'heures</label><input type="number" class="fc" id="pHs" value="8" step="0.5" min="0"></div>
+</div>
+<div class="fg"><label>Description des travaux</label><textarea class="fc" id="pWd" rows="2">Installation &#233;lectrique conforme NFC 15-100</textarea></div>
+</div>
+<div class="card">
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-tag"></i> Remise <span style="font-size:.78rem;font-weight:400;color:var(--g400)">(optionnel)</span></div>
+<div class="fr">
+<div class="fg"><label>Type de remise</label><select class="fc" id="rTy"><option value="none">Aucune remise</option><option value="percent">Pourcentage (%)</option><option value="fixed">Montant fixe (&#8364;)</option></select></div>
+<div class="fg"><label>Valeur</label><input type="number" class="fc" id="rVa" value="0" step="0.01" min="0"></div>
+</div>
+</div>
+</div>
 
 <!-- ========== IMPORT ========== -->
 <div class="pnl" id="panel-import">
 <div class="hs">
-<h4><i class="fas fa-info-circle"></i> Comment exporter depuis RS Components ?</h4>
+<h4><i class="fas fa-circle-info"></i> Comment exporter depuis RS Components ?</h4>
 <ol>
 <li>Allez sur <strong>fr.rs-online.com</strong> et ajoutez vos articles au panier</li>
 <li>Ouvrez votre panier et cliquez sur <strong>&#171; Exporter la liste &#187;</strong></li>
-<li>Enregistrez le fichier CSV sur votre ordinateur</li>
+<li>Enregistrez le fichier <strong>.csv</strong> sur votre ordinateur</li>
 <li>Glissez-d&#233;posez le fichier ci-dessous ou cliquez pour le s&#233;lectionner</li>
 </ol>
 </div>
 <div class="card">
-<div class="ct"><i class="fas fa-cloud-upload-alt"></i> Importer un fichier CSV RS Components</div>
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-cloud-arrow-up"></i> Importer un fichier CSV</div>
 <div class="dz" id="dropz" onclick="document.getElementById('csvF').click()">
-<i class="fas fa-file-csv"></i>
-<p class="mt">Glissez-d&#233;posez votre fichier CSV ici</p>
-<p>ou cliquez pour s&#233;lectionner un fichier</p>
+<div class="dz-icon"><i class="fas fa-file-csv"></i></div>
+<p class="mt">Glissez votre fichier ici ou <span>parcourir</span></p>
+<p>Formats accept&#233;s : .csv, .txt</p>
 <input type="file" id="csvF" accept=".csv,.txt" hidden onchange="handleFile(event)">
 </div>
 <div id="impRes" style="margin-top:1rem"></div>
 </div>
 <div class="card">
-<div class="ct"><i class="fas fa-plus-circle"></i> Ajouter manuellement un article</div>
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-circle-plus"></i> Ajout manuel</div>
 <div class="fr">
 <div class="fg"><label>R&#233;f&#233;rence RS</label><input type="text" class="fc" id="aRef" placeholder="Ex: 123-4567"></div>
-<div class="fg"><label>D&#233;signation</label><input type="text" class="fc" id="aName" placeholder="Ex: Disjoncteur 16A"></div>
+<div class="fg"><label>D&#233;signation</label><input type="text" class="fc" id="aName" placeholder="Ex: Disjoncteur diff. 30mA"></div>
 </div>
 <div class="fr">
 <div class="fg"><label>Prix unitaire HT (&#8364;)</label><input type="number" class="fc" id="aPrice" placeholder="0.00" step="0.01" min="0"></div>
@@ -63,105 +124,67 @@
 <!-- ========== MATERIEL ========== -->
 <div class="pnl" id="panel-materiel">
 <div class="ab">
-<div class="sbar" style="flex:1;min-width:200px"><i class="fas fa-search"></i><input type="text" placeholder="Rechercher dans la liste..." oninput="filterM(this.value)"></div>
-<button class="btn btn-dan btn-sm" onclick="clearAll()"><i class="fas fa-trash"></i> Tout supprimer</button>
+<div class="sbar" style="flex:1;min-width:220px"><i class="fas fa-magnifying-glass"></i><input type="text" placeholder="Rechercher un article..." oninput="filterM(this.value)"></div>
+<button class="btn btn-ghost btn-sm" onclick="clearAll()"><i class="fas fa-trash-can"></i> Tout supprimer</button>
 </div>
-<div class="card">
+<div class="card" style="padding:0;overflow:hidden">
 <div class="tc">
 <table><thead><tr>
 <th>R&#233;f. RS</th><th>D&#233;signation</th><th>Fabricant</th><th>Source</th>
 <th style="text-align:center">Qt&#233;</th><th style="text-align:right">P.U. HT</th>
-<th style="text-align:right">Total HT</th><th style="text-align:center">Actions</th>
+<th style="text-align:right">Total HT</th><th style="text-align:center;width:60px"></th>
 </tr></thead><tbody id="tBody"></tbody></table>
 </div>
-<div id="emSt" class="es"><i class="fas fa-box-open"></i><p>Aucun mat&#233;riel dans la liste</p><p style="font-size:.85rem">Importez un CSV ou ajoutez manuellement</p></div>
+<div id="emSt" class="es" style="padding:4rem 2rem">
+<div class="es-icon"><i class="fas fa-box-open"></i></div>
+<h3>Aucun mat&#233;riel</h3>
+<p>Importez un CSV depuis RS Components ou ajoutez des articles manuellement</p>
+</div>
 </div>
 <div class="sb" id="sumBox" style="display:none">
-<div class="sr"><span class="lbl">Nombre d'articles</span><span id="sArt">0</span></div>
-<div class="sr"><span class="lbl">Total Mat&#233;riel HT</span><span id="sMat">0,00 &#8364;</span></div>
-</div>
-</div>
-
-<!-- ========== PARAMETRES ========== -->
-<div class="pnl active" id="panel-params">
-<div class="card">
-<div class="ct"><i class="fas fa-building"></i> Choisir une entreprise</div>
-<p style="font-size:.9rem;color:#6b7280;margin-bottom:1rem">S&#233;lectionnez une entreprise fictive pour votre document :</p>
-<div class="ent-grid" id="entGrid"></div>
-</div>
-<div class="card">
-<div class="ct"><i class="fas fa-building"></i> Informations Entreprise</div>
-<div class="fr">
-<div class="fg"><label>Nom de l'entreprise</label><input type="text" class="fc" id="pCo" value="&#201;lectricit&#233; MELEC"></div>
-<div class="fg"><label>SIRET</label><input type="text" class="fc" id="pSi" placeholder="123 456 789 00012"></div>
-</div>
-<div class="fg"><label>Adresse</label><input type="text" class="fc" id="pAd" value="Lyc&#233;e Samuel de Champlain"></div>
-<div class="fr">
-<div class="fg"><label>T&#233;l&#233;phone</label><input type="text" class="fc" id="pPh" placeholder="01 23 45 67 89"></div>
-<div class="fg"><label>Email</label><input type="email" class="fc" id="pEm" placeholder="contact@entreprise.fr"></div>
-</div>
-</div>
-<div class="card">
-<div class="ct"><i class="fas fa-user"></i> Informations Client</div>
-<div class="fr">
-<div class="fg"><label>Nom du client</label><input type="text" class="fc" id="cNm" placeholder="Nom du client"></div>
-<div class="fg"><label>Soci&#233;t&#233; (optionnel)</label><input type="text" class="fc" id="cCo" placeholder="Soci&#233;t&#233; du client"></div>
-</div>
-<div class="fg"><label>Adresse du client</label><input type="text" class="fc" id="cAd" placeholder="Num&#233;ro et rue"></div>
-<div class="fr">
-<div class="fg"><label>Code Postal</label><input type="text" class="fc" id="cCp" placeholder="Ex: 94000" maxlength="5" oninput="lookupCP(this.value)"><div id="cpStatus" style="font-size:.78rem;margin-top:.2rem;color:var(--g500)"></div></div>
-<div class="fg"><label>Ville</label><input type="text" class="fc" id="cVi" placeholder="Ville (auto)" readonly style="background:var(--g50)"></div>
-</div>
-</div>
-<div class="card">
-<div class="ct"><i class="fas fa-hard-hat"></i> Main d'oeuvre</div>
-<div class="fr">
-<div class="fg"><label>Taux horaire (&#8364;/h)</label><input type="number" class="fc" id="pHr" value="45" step="0.5" min="0"></div>
-<div class="fg"><label>Nombre d'heures</label><input type="number" class="fc" id="pHs" value="8" step="0.5" min="0"></div>
-</div>
-<div class="fg"><label>Description des travaux</label><textarea class="fc" id="pWd" rows="3">Installation &#233;lectrique conforme NFC 15-100</textarea></div>
-</div>
-<div class="card">
-<div class="ct"><i class="fas fa-percent"></i> Remise (optionnel)</div>
-<div class="fr">
-<div class="fg"><label>Type de remise</label><select class="fc" id="rTy"><option value="none">Aucune remise</option><option value="percent">Pourcentage (%)</option><option value="fixed">Montant fixe (&#8364;)</option></select></div>
-<div class="fg"><label>Valeur</label><input type="number" class="fc" id="rVa" value="0" step="0.01" min="0"></div>
-</div>
+<div class="sr"><span class="lbl">Articles</span><span class="val" id="sArt">0</span></div>
+<div class="sr"><span class="lbl">Total Mat&#233;riel HT</span><span class="val" id="sMat">0,00 &#8364;</span></div>
 </div>
 </div>
 
 <!-- ========== DOCUMENT ========== -->
 <div class="pnl" id="panel-document">
 <div class="card np" id="docOptions">
-<div class="ct"><i class="fas fa-file-alt"></i> G&#233;n&#233;rer un document</div>
+<div class="ct" style="margin-bottom:1.25rem"><i class="fas fa-wand-magic-sparkles"></i> G&#233;n&#233;rer un document</div>
 <div class="fr">
-<div class="fg"><label>Type de document</label><select class="fc" id="pTy" onchange="toggleMoFields()"><option value="devis">Devis simple (mat&#233;riel uniquement)</option><option value="devis-mo">Devis + Main d'oeuvre</option><option value="facture" selected>Facture compl&#232;te avec TVA</option></select></div>
-<div class="fg"><label>Num&#233;ro</label><input type="text" class="fc" id="pNu" placeholder="Auto"></div>
+<div class="fg"><label>Type de document</label><select class="fc" id="pTy"><option value="devis">Devis simple (mat&#233;riel uniquement)</option><option value="devis-mo">Devis + Main d'&#339;uvre</option><option value="facture" selected>Facture compl&#232;te avec TVA</option></select></div>
+<div class="fg"><label>Num&#233;ro</label><input type="text" class="fc" id="pNu" placeholder="G&#233;n&#233;r&#233; automatiquement"></div>
 </div>
 <div class="fr">
 <div class="fg"><label>Date</label><input type="date" class="fc" id="pDa"></div>
-<div class="fg"><label>Taux TVA (%)</label><select class="fc" id="pTv"><option value="20" selected>20% (taux normal)</option><option value="10">10% (taux interm&#233;diaire)</option><option value="5.5">5,5% (taux r&#233;duit)</option><option value="0">0% (exon&#233;r&#233;)</option></select></div>
+<div class="fg"><label>Taux TVA</label><select class="fc" id="pTv"><option value="20" selected>20 % &#8212; taux normal</option><option value="10">10 % &#8212; taux interm&#233;diaire</option><option value="5.5">5,5 % &#8212; taux r&#233;duit</option><option value="0">0 % &#8212; exon&#233;r&#233;</option></select></div>
 </div>
-<div style="text-align:center;margin-top:1rem">
-<button class="btn btn-pri btn-lg" onclick="genDoc()"><i class="fas fa-magic"></i> G&#233;n&#233;rer le document</button>
+<div style="text-align:center;margin-top:1.5rem">
+<button class="btn btn-pri btn-lg" onclick="genDoc()" style="min-width:260px"><i class="fas fa-bolt"></i> G&#233;n&#233;rer le document</button>
 </div>
 </div>
 <div class="ab np" id="docActions" style="display:none">
 <button class="btn btn-pri" onclick="window.print()"><i class="fas fa-print"></i> Imprimer / PDF</button>
 <button class="btn btn-suc" onclick="expWord()"><i class="fas fa-file-word"></i> Export Word</button>
-<button class="btn btn-out" onclick="showDocOptions()"><i class="fas fa-redo"></i> Nouveau document</button>
+<div style="flex:1"></div>
+<button class="btn btn-ghost" onclick="showDocOptions()"><i class="fas fa-arrow-left"></i> Nouveau document</button>
 </div>
 <div id="docC"></div>
 </div>
 
 </div>
+</div>
+</div>
+
+<!-- MOBILE TOGGLE -->
+<button class="mob-toggle" id="mobBtn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
 
 <!-- Modal suppression -->
 <div class="mov" id="mDel">
 <div class="mod">
-<h3><i class="fas fa-exclamation-triangle" style="color:var(--dan)"></i> Confirmation</h3>
-<p>Supprimer tous les articles de la liste ?</p>
-<div class="moa"><button class="btn btn-out" onclick="closeMo('mDel')">Annuler</button><button class="btn btn-dan" onclick="doClear()">Supprimer tout</button></div>
+<h3><i class="fas fa-triangle-exclamation" style="color:var(--dan)"></i> Tout supprimer ?</h3>
+<p>Cette action est irr&#233;versible. Tous les articles seront supprim&#233;s de la liste.</p>
+<div class="moa"><button class="btn btn-ghost" onclick="closeMo('mDel')">Annuler</button><button class="btn btn-dan" onclick="doClear()">Supprimer tout</button></div>
 </div>
 </div>
 
