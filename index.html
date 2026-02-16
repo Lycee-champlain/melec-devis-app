@@ -17,16 +17,16 @@
 </div>
 
 <div class="tabs">
-<div class="tab active" data-tab="import" onclick="switchTab('import')"><i class="fas fa-file-import"></i> Import CSV</div>
+<div class="tab active" data-tab="params" onclick="switchTab('params')"><i class="fas fa-cog"></i> Param&#232;tres</div>
+<div class="tab" data-tab="import" onclick="switchTab('import')"><i class="fas fa-file-import"></i> Import CSV</div>
 <div class="tab" data-tab="materiel" onclick="switchTab('materiel')"><i class="fas fa-list"></i> Mat&#233;riel <span class="badge" id="bc">0</span></div>
-<div class="tab" data-tab="params" onclick="switchTab('params')"><i class="fas fa-cog"></i> Param&#232;tres</div>
 <div class="tab" data-tab="document" onclick="switchTab('document')"><i class="fas fa-file-invoice"></i> Document</div>
 </div>
 
 <div class="main">
 
 <!-- ========== IMPORT ========== -->
-<div class="pnl active" id="panel-import">
+<div class="pnl" id="panel-import">
 <div class="hs">
 <h4><i class="fas fa-info-circle"></i> Comment exporter depuis RS Components ?</h4>
 <ol>
@@ -83,7 +83,7 @@
 </div>
 
 <!-- ========== PARAMETRES ========== -->
-<div class="pnl" id="panel-params">
+<div class="pnl active" id="panel-params">
 <div class="card">
 <div class="ct"><i class="fas fa-building"></i> Choisir une entreprise</div>
 <p style="font-size:.9rem;color:#6b7280;margin-bottom:1rem">S&#233;lectionnez une entreprise fictive pour votre document :</p>
@@ -107,7 +107,11 @@
 <div class="fg"><label>Nom du client</label><input type="text" class="fc" id="cNm" placeholder="Nom du client"></div>
 <div class="fg"><label>Soci&#233;t&#233; (optionnel)</label><input type="text" class="fc" id="cCo" placeholder="Soci&#233;t&#233; du client"></div>
 </div>
-<div class="fg"><label>Adresse du client</label><input type="text" class="fc" id="cAd" placeholder="Adresse du client"></div>
+<div class="fg"><label>Adresse du client</label><input type="text" class="fc" id="cAd" placeholder="Num&#233;ro et rue"></div>
+<div class="fr">
+<div class="fg"><label>Code Postal</label><input type="text" class="fc" id="cCp" placeholder="Ex: 94000" maxlength="5" oninput="lookupCP(this.value)"><div id="cpStatus" style="font-size:.78rem;margin-top:.2rem;color:var(--g500)"></div></div>
+<div class="fg"><label>Ville</label><input type="text" class="fc" id="cVi" placeholder="Ville (auto)" readonly style="background:var(--g50)"></div>
+</div>
 </div>
 <div class="card">
 <div class="ct"><i class="fas fa-file-alt"></i> Type de Document</div>

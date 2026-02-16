@@ -1,3 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MELEC - Devis et Facturation</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root{--pri:#1a56db;--pl:#3b82f6;--pd:#1e40af;--acc:#f59e0b;--suc:#10b981;--dan:#ef4444;--g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--r:10px;--sh:0 1px 3px rgba(0,0,0,.1);--shm:0 4px 6px rgba(0,0,0,.07);--shl:0 10px 15px rgba(0,0,0,.1)}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--g100);color:var(--g800);line-height:1.6}
+.hdr{background:linear-gradient(135deg,var(--pd),var(--pri));color:#fff;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shm);position:sticky;top:0;z-index:100}
+.hdr-l{display:flex;align-items:center;gap:1rem}.hdr h1{font-size:1.3rem;font-weight:700}.hdr-sub{font-size:.8rem;opacity:.85}
+.tabs{display:flex;background:#fff;border-bottom:2px solid var(--g200);padding:0 1rem;overflow-x:auto}
+.tab{padding:.9rem 1.5rem;cursor:pointer;font-weight:600;font-size:.9rem;color:var(--g500);border-bottom:3px solid transparent;transition:.2s;display:flex;align-items:center;gap:.5rem;white-space:nowrap;user-select:none}
+.tab:hover{color:var(--pri);background:var(--g50)}.tab.active{color:var(--pri);border-bottom-color:var(--pri)}
+.tab .badge{background:var(--pri);color:#fff;font-size:.7rem;padding:.1rem .5rem;border-radius:10px;font-weight:700}
+.main{max-width:1400px;margin:0 auto;padding:1.5rem}.pnl{display:none}.pnl.active{display:block}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);padding:1.5rem;margin-bottom:1.5rem}
+.ct{font-size:1.1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}.ct i{color:var(--pri)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.2rem;border-radius:8px;font-weight:600;font-size:.85rem;border:none;cursor:pointer;transition:.2s}
+.btn-pri{background:var(--pri);color:#fff}.btn-pri:hover{background:var(--pd)}
+.btn-suc{background:var(--suc);color:#fff}.btn-suc:hover{background:#059669}
+.btn-dan{background:var(--dan);color:#fff}.btn-dan:hover{background:#dc2626}
+.btn-acc{background:var(--acc);color:#fff}.btn-acc:hover{background:#d97706}
+.btn-out{background:#fff;color:var(--pri);border:2px solid var(--pri)}.btn-out:hover{background:var(--pri);color:#fff}
+.btn-sm{padding:.4rem .8rem;font-size:.8rem}.btn-lg{padding:.8rem 2rem;font-size:1rem}
+.fg{margin-bottom:1rem}.fg label{display:block;font-weight:600;font-size:.85rem;margin-bottom:.3rem;color:var(--g700)}
+.fc{width:100%;padding:.6rem .8rem;border:2px solid var(--g200);border-radius:8px;font-size:.9rem;transition:.2s;font-family:inherit}
+.fc:focus{outline:none;border-color:var(--pl);box-shadow:0 0 0 3px rgba(59,130,246,.1)}select.fc{cursor:pointer}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.dz{border:2px dashed var(--g300);border-radius:var(--r);padding:2.5rem;text-align:center;cursor:pointer;transition:.3s;background:var(--g50)}
+.dz:hover,.dz.over{border-color:var(--pri);background:#eff6ff}
+.dz i.fa-file-csv{font-size:2.5rem;color:var(--pl);margin-bottom:.8rem}.dz p{color:var(--g500);font-size:.9rem}.dz .mt{font-weight:600;color:var(--g700);font-size:1rem;margin-bottom:.3rem}
+.tc{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:var(--g50);padding:.7rem .8rem;text-align:left;font-weight:700;color:var(--g600);border-bottom:2px solid var(--g200);font-size:.8rem;text-transform:uppercase}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--g100);vertical-align:middle}tr:hover td{background:var(--g50)}
+.qi{width:65px;padding:.3rem;border:2px solid var(--g200);border-radius:6px;text-align:center;font-weight:600;font-family:inherit}.qi:focus{border-color:var(--pl);outline:none}
+.price{font-weight:700;color:var(--pd)}.rb{background:var(--g100);padding:.15rem .5rem;border-radius:4px;font-family:monospace;font-size:.8rem;color:var(--g600)}
+.sb{background:linear-gradient(135deg,#1e3a5f,#1a56db);color:#fff;border-radius:var(--r);padding:1.5rem}
+.sr{display:flex;justify-content:space-between;padding:.4rem 0;font-size:.95rem}.sr .lbl{opacity:.9}
+.dp{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:2.5rem;max-width:850px;margin:0 auto;box-shadow:var(--shl)}
+.dh{display:flex;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:3px solid var(--pri)}
+.dco{display:flex;align-items:center;gap:1rem}.dco .logo-svg{width:60px;height:60px;flex-shrink:0}
+.dco .info h2{color:var(--pri);font-size:1.2rem}.dco .info p{font-size:.82rem;color:var(--g500);margin:0}
+.dty{text-align:right}.dty h3{font-size:1.5rem;color:var(--pd);text-transform:uppercase;letter-spacing:.05em}
+.dty .dn{font-size:.9rem;color:var(--g500)}.dty .dd{font-size:.85rem;color:var(--g400)}
+.dcb{background:var(--g50);border-radius:8px;padding:1rem;margin-bottom:1.5rem}.dcb h4{font-size:.8rem;text-transform:uppercase;color:var(--g500);margin-bottom:.3rem}
+.dtb{width:100%;border-collapse:collapse;margin-bottom:1.5rem}
+.dtb th{background:var(--pri);color:#fff;padding:.6rem .8rem;font-size:.8rem;text-transform:uppercase;text-align:left}
+.dtb td{padding:.5rem .8rem;border-bottom:1px solid var(--g200);font-size:.85rem}.dtb tr:nth-child(even){background:var(--g50)}
+.tots{margin-left:auto;width:280px}.tots .rw{display:flex;justify-content:space-between;padding:.4rem 0;font-size:.9rem}
+.tots .rw.grand{border-top:2px solid var(--g800);font-weight:800;font-size:1.1rem;padding-top:.6rem;margin-top:.3rem}
+.df{margin-top:2rem;padding-top:1rem;border-top:1px solid var(--g200);font-size:.8rem;color:var(--g400);text-align:center}
+.es{text-align:center;padding:3rem;color:var(--g400)}.es i{font-size:3rem;margin-bottom:1rem;display:block}.es p{font-size:1rem}
+.alert{padding:.8rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem;display:flex;align-items:center;gap:.5rem}
+.al-i{background:#dbeafe;color:#1e40af}.al-s{background:#d1fae5;color:#065f46}.al-w{background:#fef3c7;color:#92400e}
+.ab{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.mov{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;justify-content:center;align-items:center}
+.mov.active{display:flex}.mod{background:#fff;border-radius:var(--r);padding:2rem;width:90%;max-width:550px;box-shadow:var(--shl)}
+.mod h3{margin-bottom:1rem}.moa{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.5rem}
+.sbar{position:relative}.sbar input{width:100%;padding:.7rem .8rem .7rem 2.5rem;border:2px solid var(--g200);border-radius:8px;font-size:.9rem;font-family:inherit}
+.sbar input:focus{border-color:var(--pl);outline:none}.sbar>i{position:absolute;left:.8rem;top:50%;transform:translateY(-50%);color:var(--g400)}
+.hs{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:1.2rem;margin-bottom:1.5rem}
+.hs h4{color:#92400e;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.hs ol{padding-left:1.3rem;font-size:.9rem;color:#78350f}.hs li{margin-bottom:.3rem}
+.tag{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.75rem;font-weight:600}
+.tag-rs{background:#fee2e2;color:#dc2626}.tag-m{background:#dbeafe;color:#1d4ed8}
+.ent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}.ent-card{border:2px solid var(--g200);border-radius:var(--r);padding:1rem;cursor:pointer;transition:.2s;text-align:center}
+.ent-card:hover{border-color:var(--pl);background:#eff6ff}.ent-card.sel{border-color:var(--pri);background:#dbeafe;box-shadow:0 0 0 3px rgba(26,86,219,.2)}
+.ent-card .logo-svg{width:70px;height:70px;margin:0 auto .5rem}
+.ent-card h3{font-size:.95rem;color:var(--g800)}.ent-card p{font-size:.75rem;color:var(--g500)}
+@media print{
+  @page{size:A4;margin:15mm}
+  body{background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  .hdr,.tabs,.ab,.btn,.np,.mov,.hs,.pnl:not(#panel-document){display:none!important}
+  .main{padding:0!important;max-width:100%!important}
+  #panel-document{display:block!important}
+  .dp{box-shadow:none!important;border:none!important;padding:0!important;max-width:100%!important}
+  .dh{display:flex!important;border-bottom:3px solid #1a56db!important}
+  .dco .logo-svg{width:50px!important;height:50px!important}
+  .dco .info h2{color:#1a56db!important}
+  .dty h3{color:#1e40af!important}
+  .dtb th{background:#1a56db!important;color:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .dtb tr:nth-child(even){background:#f9fafb!important}
+  .dcb{background:#f9fafb!important;border:1px solid #e5e7eb!important}
+  .tots .rw.grand{border-top:2px solid #1f2937!important}
+  .df{border-top:1px solid #e5e7eb!important}
+  table{page-break-inside:auto}tr{page-break-inside:avoid}
+}
+@media(max-width:768px){.hdr{padding:.8rem 1rem}.hdr h1{font-size:1rem}.main{padding:1rem}.fr,.fr3{grid-template-columns:1fr}.tab{padding:.7rem 1rem;font-size:.8rem}.dh{flex-direction:column;gap:1rem}.dty{text-align:left}.tots{width:100%}.ent-grid{grid-template-columns:repeat(2,1fr)}}
+
+</style>
+</head>
+<body>
+<div class="hdr">
+<div class="hdr-l">
+<svg width="44" height="44" viewBox="0 0 44 44"><rect width="44" height="44" rx="10" fill="#fff"/><path d="M24 6L12 24h8l-4 14 16-20h-8z" fill="#1a56db"/></svg>
+<div><h1>MELEC - Devis &amp; Facturation</h1><div class="hdr-sub">Gestion de mat&#233;riel &#233;lectrique &#8226; Import RS Components</div></div>
+</div>
+<div><button class="btn btn-acc" onclick="resetAll()"><i class="fas fa-redo"></i> Nouveau</button></div>
+</div>
+
+<div class="tabs">
+<div class="tab active" data-tab="params" onclick="switchTab('params')"><i class="fas fa-cog"></i> Param&#232;tres</div>
+<div class="tab" data-tab="import" onclick="switchTab('import')"><i class="fas fa-file-import"></i> Import CSV</div>
+<div class="tab" data-tab="materiel" onclick="switchTab('materiel')"><i class="fas fa-list"></i> Mat&#233;riel <span class="badge" id="bc">0</span></div>
+<div class="tab" data-tab="document" onclick="switchTab('document')"><i class="fas fa-file-invoice"></i> Document</div>
+</div>
+
+<div class="main">
+
+<!-- ========== IMPORT ========== -->
+<div class="pnl" id="panel-import">
+<div class="hs">
+<h4><i class="fas fa-info-circle"></i> Comment exporter depuis RS Components ?</h4>
+<ol>
+<li>Allez sur <strong>fr.rs-online.com</strong> et ajoutez vos articles au panier</li>
+<li>Ouvrez votre panier et cliquez sur <strong>&#171; Exporter la liste &#187;</strong></li>
+<li>Enregistrez le fichier CSV sur votre ordinateur</li>
+<li>Glissez-d&#233;posez le fichier ci-dessous ou cliquez pour le s&#233;lectionner</li>
+</ol>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-cloud-upload-alt"></i> Importer un fichier CSV RS Components</div>
+<div class="dz" id="dropz" onclick="document.getElementById('csvF').click()">
+<i class="fas fa-file-csv"></i>
+<p class="mt">Glissez-d&#233;posez votre fichier CSV ici</p>
+<p>ou cliquez pour s&#233;lectionner un fichier</p>
+<input type="file" id="csvF" accept=".csv,.txt" hidden onchange="handleFile(event)">
+</div>
+<div id="impRes" style="margin-top:1rem"></div>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-plus-circle"></i> Ajouter manuellement un article</div>
+<div class="fr">
+<div class="fg"><label>R&#233;f&#233;rence RS</label><input type="text" class="fc" id="aRef" placeholder="Ex: 123-4567"></div>
+<div class="fg"><label>D&#233;signation</label><input type="text" class="fc" id="aName" placeholder="Ex: Disjoncteur 16A"></div>
+</div>
+<div class="fr">
+<div class="fg"><label>Prix unitaire HT (&#8364;)</label><input type="number" class="fc" id="aPrice" placeholder="0.00" step="0.01" min="0"></div>
+<div class="fg"><label>Quantit&#233;</label><input type="number" class="fc" id="aQty" placeholder="1" min="1" value="1"></div>
+</div>
+<button class="btn btn-pri" onclick="addManual()"><i class="fas fa-plus"></i> Ajouter &#224; la liste</button>
+</div>
+</div>
+
+<!-- ========== MATERIEL ========== -->
+<div class="pnl" id="panel-materiel">
+<div class="ab">
+<div class="sbar" style="flex:1;min-width:200px"><i class="fas fa-search"></i><input type="text" placeholder="Rechercher dans la liste..." oninput="filterM(this.value)"></div>
+<button class="btn btn-dan btn-sm" onclick="clearAll()"><i class="fas fa-trash"></i> Tout supprimer</button>
+</div>
+<div class="card">
+<div class="tc">
+<table><thead><tr>
+<th>R&#233;f. RS</th><th>D&#233;signation</th><th>Fabricant</th><th>Source</th>
+<th style="text-align:center">Qt&#233;</th><th style="text-align:right">P.U. HT</th>
+<th style="text-align:right">Total HT</th><th style="text-align:center">Actions</th>
+</tr></thead><tbody id="tBody"></tbody></table>
+</div>
+<div id="emSt" class="es"><i class="fas fa-box-open"></i><p>Aucun mat&#233;riel dans la liste</p><p style="font-size:.85rem">Importez un CSV ou ajoutez manuellement</p></div>
+</div>
+<div class="sb" id="sumBox" style="display:none">
+<div class="sr"><span class="lbl">Nombre d'articles</span><span id="sArt">0</span></div>
+<div class="sr"><span class="lbl">Total Mat&#233;riel HT</span><span id="sMat">0,00 &#8364;</span></div>
+</div>
+</div>
+
+<!-- ========== PARAMETRES ========== -->
+<div class="pnl active" id="panel-params">
+<div class="card">
+<div class="ct"><i class="fas fa-building"></i> Choisir une entreprise</div>
+<p style="font-size:.9rem;color:#6b7280;margin-bottom:1rem">S&#233;lectionnez une entreprise fictive pour votre document :</p>
+<div class="ent-grid" id="entGrid"></div>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-building"></i> Informations Entreprise</div>
+<div class="fr">
+<div class="fg"><label>Nom de l'entreprise</label><input type="text" class="fc" id="pCo" value="&#201;lectricit&#233; MELEC"></div>
+<div class="fg"><label>SIRET</label><input type="text" class="fc" id="pSi" placeholder="123 456 789 00012"></div>
+</div>
+<div class="fg"><label>Adresse</label><input type="text" class="fc" id="pAd" value="Lyc&#233;e Samuel de Champlain"></div>
+<div class="fr">
+<div class="fg"><label>T&#233;l&#233;phone</label><input type="text" class="fc" id="pPh" placeholder="01 23 45 67 89"></div>
+<div class="fg"><label>Email</label><input type="email" class="fc" id="pEm" placeholder="contact@entreprise.fr"></div>
+</div>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-user"></i> Informations Client</div>
+<div class="fr">
+<div class="fg"><label>Nom du client</label><input type="text" class="fc" id="cNm" placeholder="Nom du client"></div>
+<div class="fg"><label>Soci&#233;t&#233; (optionnel)</label><input type="text" class="fc" id="cCo" placeholder="Soci&#233;t&#233; du client"></div>
+</div>
+<div class="fg"><label>Adresse du client</label><input type="text" class="fc" id="cAd" placeholder="Num&#233;ro et rue"></div>
+<div class="fr">
+<div class="fg"><label>Code Postal</label><input type="text" class="fc" id="cCp" placeholder="Ex: 94000" maxlength="5" oninput="lookupCP(this.value)"><div id="cpStatus" style="font-size:.78rem;margin-top:.2rem;color:var(--g500)"></div></div>
+<div class="fg"><label>Ville</label><input type="text" class="fc" id="cVi" placeholder="Ville (auto)" readonly style="background:var(--g50)"></div>
+</div>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-file-alt"></i> Type de Document</div>
+<div class="fr">
+<div class="fg"><label>Type</label><select class="fc" id="pTy"><option value="devis">Devis simple (mat&#233;riel uniquement)</option><option value="devis-mo">Devis + Main d'oeuvre</option><option value="facture" selected>Facture compl&#232;te avec TVA</option></select></div>
+<div class="fg"><label>Num&#233;ro</label><input type="text" class="fc" id="pNu" placeholder="Auto"></div>
+</div>
+<div class="fr">
+<div class="fg"><label>Date</label><input type="date" class="fc" id="pDa"></div>
+<div class="fg"><label>Taux TVA (%)</label><select class="fc" id="pTv"><option value="20" selected>20% (taux normal)</option><option value="10">10% (taux interm&#233;diaire)</option><option value="5.5">5,5% (taux r&#233;duit)</option><option value="0">0% (exon&#233;r&#233;)</option></select></div>
+</div>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-hard-hat"></i> Main d'oeuvre</div>
+<div class="alert al-i"><i class="fas fa-info-circle"></i> Incluse pour &#171; Devis + MO &#187; et &#171; Facture compl&#232;te &#187;</div>
+<div class="fr">
+<div class="fg"><label>Taux horaire (&#8364;/h)</label><input type="number" class="fc" id="pHr" value="45" step="0.5" min="0"></div>
+<div class="fg"><label>Nombre d'heures</label><input type="number" class="fc" id="pHs" value="8" step="0.5" min="0"></div>
+</div>
+<div class="fg"><label>Description des travaux</label><textarea class="fc" id="pWd" rows="3">Installation &#233;lectrique conforme NFC 15-100</textarea></div>
+</div>
+<div class="card">
+<div class="ct"><i class="fas fa-percent"></i> Remise (optionnel)</div>
+<div class="fr">
+<div class="fg"><label>Type de remise</label><select class="fc" id="rTy"><option value="none">Aucune remise</option><option value="percent">Pourcentage (%)</option><option value="fixed">Montant fixe (&#8364;)</option></select></div>
+<div class="fg"><label>Valeur</label><input type="number" class="fc" id="rVa" value="0" step="0.01" min="0"></div>
+</div>
+</div>
+<div style="text-align:center;margin-top:1rem"><button class="btn btn-pri btn-lg" onclick="genDoc()"><i class="fas fa-magic"></i> G&#233;n&#233;rer le document</button></div>
+</div>
+
+<!-- ========== DOCUMENT ========== -->
+<div class="pnl" id="panel-document">
+<div class="ab np">
+<button class="btn btn-pri" onclick="window.print()"><i class="fas fa-print"></i> Imprimer / PDF</button>
+<button class="btn btn-suc" onclick="expWord()"><i class="fas fa-file-word"></i> Export Word</button>
+<button class="btn btn-acc" onclick="expExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+<button class="btn btn-out" onclick="switchTab('params')"><i class="fas fa-edit"></i> Modifier</button>
+</div>
+<div id="docC"><div class="es"><i class="fas fa-file-invoice"></i><p>Aucun document g&#233;n&#233;r&#233;</p><p style="font-size:.85rem">Ajoutez du mat&#233;riel puis configurez les param&#232;tres</p></div></div>
+</div>
+
+</div>
+
+<!-- Modal suppression -->
+<div class="mov" id="mDel">
+<div class="mod">
+<h3><i class="fas fa-exclamation-triangle" style="color:var(--dan)"></i> Confirmation</h3>
+<p>Supprimer tous les articles de la liste ?</p>
+<div class="moa"><button class="btn btn-out" onclick="closeMo('mDel')">Annuler</button><button class="btn btn-dan" onclick="doClear()">Supprimer tout</button></div>
+</div>
+</div>
+
+<script>
 // === 6 ENTREPRISES FICTIVES AVEC LOGOS SVG ===
 var ENTREPRISES = [
   {
@@ -351,3 +603,7 @@ document.addEventListener('DOMContentLoaded',function(){
   setupDZ();
   renderEnts();
 });
+
+</script>
+</body>
+</html>
