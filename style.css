@@ -64,7 +64,7 @@ td{padding:.6rem .8rem;border-bottom:1px solid var(--g100);vertical-align:middle
 @media print{
   @page{size:A4;margin:15mm}
   body{background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-  .hdr,.tabs,.ab,.btn,.np,.mov,.hs,.pnl:not(#panel-document){display:none!important}
+  .hdr,.tabs,.ab,.btn,.np,.mov,.hs,.pnl:not(#panel-document),#docOptions{display:none!important}
   .main{padding:0!important;max-width:100%!important}
   #panel-document{display:block!important}
   .dp{box-shadow:none!important;border:none!important;padding:0!important;max-width:100%!important}

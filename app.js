@@ -261,34 +261,47 @@ function genDoc(){
 
   document.getElementById('docC').innerHTML=h;
   docOk=true;
-  switchTab('document');
+  // Hide options, show action buttons
+  document.getElementById('docOptions').style.display='none';
+  document.getElementById('docActions').style.display='flex';
 }
 
 // === EXPORTS ===
+function svgToDataUrl(svgStr){
+  return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svgStr)));
+}
+
 function expWord(){
   var c=document.getElementById('docP');
   if(!c){alert('G\u00e9n\u00e9rez le document d\'abord.');return}
-  var h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>body{font-family:Calibri,sans-serif;font-size:11pt}table{border-collapse:collapse;width:100%}th{background:#1a56db;color:#fff;padding:6px 8px;font-size:9pt}td{padding:5px 8px;border-bottom:1px solid #ddd;font-size:10pt}h2{color:#1a56db}h3{color:#1e40af}</style></head><body>'+c.innerHTML+'</body></html>';
+  // Clone and convert SVG logos to img tags for Word compatibility
+  var clone=c.cloneNode(true);
+  var svgs=clone.querySelectorAll('svg');
+  svgs.forEach(function(svg){
+    var svgStr=new XMLSerializer().serializeToString(svg);
+    var img=document.createElement('img');
+    img.src=svgToDataUrl(svgStr);
+    img.style.width=svg.getAttribute('width')?svg.getAttribute('width')+'px':'60px';
+    img.style.height=svg.getAttribute('height')?svg.getAttribute('height')+'px':'60px';
+    if(svg.closest('.logo-svg')){img.style.width='60px';img.style.height='60px'}
+    svg.parentNode.replaceChild(img,svg);
+  });
+  var h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>body{font-family:Calibri,sans-serif;font-size:11pt}table{border-collapse:collapse;width:100%}th{background:#1a56db;color:#fff;padding:6px 8px;font-size:9pt;text-align:left}td{padding:5px 8px;border-bottom:1px solid #ddd;font-size:10pt}h2{color:#1a56db;margin:0}h3{color:#1e40af;margin:0}p{margin:2px 0}.dh{display:flex;border-bottom:3px solid #1a56db;padding-bottom:12px;margin-bottom:15px}.dco{display:flex;align-items:center;gap:10px}.tots .rw{display:flex;justify-content:space-between;padding:3px 0}.tots .rw.grand{border-top:2px solid #1f2937;font-weight:bold;font-size:13pt;padding-top:6px;margin-top:4px}.dcb{background:#f5f5f5;padding:8px;border-radius:4px;margin-bottom:12px}.df{margin-top:15px;padding-top:8px;border-top:1px solid #ddd;font-size:8pt;color:#999;text-align:center}</style></head><body>'+clone.innerHTML+'</body></html>';
   dlB(new Blob(['\ufeff',h],{type:'application/msword'}),gfn('.doc'));
 }
 
-function expExcel(){
+function showDocOptions(){
+  document.getElementById('docOptions').style.display='block';
+  document.getElementById('docActions').style.display='none';
+  document.getElementById('docC').innerHTML='';
+  document.getElementById('pNu').value='';
+  docOk=false;
+}
+
+function toggleMoFields(){
   var dt=document.getElementById('pTy').value;
-  var tr=parseFloat(document.getElementById('pTv').value)/100;
-  var hr=parseFloat(document.getElementById('pHr').value)||0;
-  var hs=parseFloat(document.getElementById('pHs').value)||0;
-  var csv='\ufeffN\u00b0;R\u00e9f\u00e9rence;D\u00e9signation;Fabricant;Quantit\u00e9;Prix Unitaire HT;Total HT\n';
-  items.forEach(function(it,idx){
-    csv+=(idx+1)+';'+it.ref+';'+it.name.replace(/;/g,',')+';'+(it.mfr||'-')+';'+it.qty+';'+it.price.toFixed(2)+';'+(it.price*it.qty).toFixed(2)+'\n';
-  });
-  if(dt!=='devis'&&hr>0&&hs>0) csv+=(items.length+1)+';-;Main d\'oeuvre;-;'+hs+'h;'+hr.toFixed(2)+';'+(hr*hs).toFixed(2)+'\n';
-  var tm=items.reduce(function(s,i){return s+i.price*i.qty},0);
-  var tmo=dt!=='devis'?hr*hs:0, tht=tm+tmo, tv=dt==='facture'?tht*tr:0;
-  csv+='\n;;;TOTAL MAT\u00c9RIEL HT;;;;'+tm.toFixed(2)+'\n';
-  if(tmo>0) csv+=';;;MAIN D\'OEUVRE HT;;;;'+tmo.toFixed(2)+'\n';
-  csv+=';;;TOTAL HT;;;;'+tht.toFixed(2)+'\n';
-  if(dt==='facture'){csv+=';;;TVA ('+(tr*100).toFixed(1)+'%);;;;'+tv.toFixed(2)+'\n';csv+=';;;TOTAL TTC;;;;'+(tht+tv).toFixed(2)+'\n'}
-  dlB(new Blob([csv],{type:'text/csv;charset=utf-8;'}),gfn('.csv'));
+  var moCard=document.querySelector('#panel-params .card:nth-last-child(2)');
+  // MO fields visibility hint - no hide needed since they're in params
 }
 
 // === UTILS ===
@@ -302,7 +315,10 @@ function dlB(b,n){var a=document.createElement('a');a.href=URL.createObjectURL(b
 function resetAll(){
   if(items.length>0&&!confirm('R\u00e9initialiser ? Toutes les donn\u00e9es seront perdues.'))return;
   items=[];filt=null;docOk=false;updB();
-  document.getElementById('docC').innerHTML='<div class="es"><i class="fas fa-file-invoice"></i><p>Aucun document g\u00e9n\u00e9r\u00e9</p></div>';
+  document.getElementById('docC').innerHTML='';
+  document.getElementById('docOptions').style.display='block';
+  document.getElementById('docActions').style.display='none';
+  document.getElementById('pNu').value='';
   document.getElementById('impRes').innerHTML='';
   switchTab('params');
 }
